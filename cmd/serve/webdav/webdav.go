@@ -423,6 +423,11 @@ func (w *WebDAV) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		w.serveDir(rw, r, remote)
 		return
 	}
+	// Custom: standalone Plyr player page for GET /file.mp4?stream
+	// (see stream.go). Runs behind rclone's auth like everything else.
+	if !isDir && serveStreamPage(rw, r, w.opt.HTTP.BaseURL) {
+		return
+	}
 	// Work around bug in x/net/webdav which handles Overwrite incorrectly
 	// See: https://github.com/golang/go/issues/66059
 	// Remove when the above bug is fixed.
